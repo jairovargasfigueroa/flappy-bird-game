@@ -1,0 +1,17 @@
+# Compilados de Maven
+target/
+
+# Archivos de IDE
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Herramienta auxiliar (no es parte del proyecto)
+src/main/resources/textures/generar_digits.html
