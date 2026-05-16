@@ -71,6 +71,9 @@ public class Renderer {
     // -------------------------------------------------------------------------
 
     private void crearShaders() {
+        // Vertex shader: transforma el quad base en 3 pasos —
+        //   1) escala (uScale)  2) rota con cos/sin (uAngle)  3) traslada (uOffset).
+        // El mismo uAngle se aplica a cada vértice, así el pájaro rota como bloque.
         String vertexSrc = """
             #version 330 core
             layout (location = 0) in vec3 aPos;
@@ -239,7 +242,7 @@ public class Renderer {
 
         if (!state.gameOver) {
             GL30.glBindVertexArray(vao);
-            dibujarHUD(bird1, bird2, jugadores, state.nivel);
+            dibujarHUD(bird1, bird2, jugadores);
         }
 
         if (state.gameOver) {
@@ -260,9 +263,9 @@ public class Renderer {
     private void dibujarMenu(int opcion) {
         if (texMenu != 0) {
             dibujarTextura(texMenu);
-            // Borde amarillo sobre la opción activa — ajusta Y según tu imagen
+            // Punto amarillo a la IZQUIERDA de la opción activa — ajusta Y según tu imagen
             float y = (opcion == 0) ? 0.07f : -0.21f;
-            dibujarBorde(0.0f, y, 0.70f, 0.12f, 1.0f, 0.85f, 0.0f);
+            dibujarRect(-0.45f, y, 0.05f, 0.05f, 1.0f, 0.85f, 0.0f);
         } else {
             // Fallback sin textura
             dibujarRect(0.0f,  0.0f,  2.0f,  2.0f,  0.08f, 0.10f, 0.14f);
@@ -281,14 +284,11 @@ public class Renderer {
         if (texGameOver != 0) {
             dibujarTextura(texGameOver);
 
-            // Puntaje como número real — ajusta Y según tu imagen
-            dibujarNumero(bird1.puntaje, 0.0f, 0.05f, 0.12f);
-            if (jugadores == 2)
-                dibujarNumero(bird2.puntaje, 0.0f, -0.10f, 0.12f);
+            // El puntaje se muestra en el título de la ventana (ver FlappyGame.actualizarTitulo)
 
-            // Borde amarillo sobre la opción activa — ajusta Y según tu imagen
+            // Punto amarillo a la IZQUIERDA de la opción activa — ajusta Y según tu imagen
             float y = (opcion == 0) ? -0.14f : -0.41f;
-            dibujarBorde(0.0f, y, 0.60f, 0.10f, 1.0f, 0.85f, 0.0f);
+            dibujarRect(-0.40f, y, 0.05f, 0.05f, 1.0f, 0.85f, 0.0f);
         } else {
             // Fallback sin textura
             dibujarRect(0.0f, 0.0f, 1.30f, 0.55f, 0.10f, 0.12f, 0.15f);
@@ -310,9 +310,9 @@ public class Renderer {
      * HUD en pantalla durante el juego.
      * 1 jugador: número del puntaje en la esquina superior izquierda.
      * 2 jugadores: cuadradito del color del pájaro + número por cada jugador.
-     * Nivel: cuadrados amarillos apilados en la esquina derecha.
+     * El nivel se muestra en el título de la ventana (ver FlappyGame.actualizarTitulo).
      */
-    private void dibujarHUD(Bird bird1, Bird bird2, int jugadores, int nivel) {
+    private void dibujarHUD(Bird bird1, Bird bird2, int jugadores) {
         GL20.glUseProgram(programa);
         GL30.glBindVertexArray(vao);
 
@@ -327,10 +327,6 @@ public class Renderer {
             dibujarRect(-0.85f, 0.76f, tam, tam, bird2.r, bird2.g, bird2.b);
             dibujarNumero(bird2.puntaje, -0.68f, 0.76f, 0.10f);
         }
-
-        // Nivel: cuadrados apilados en esquina derecha
-        for (int i = 0; i < nivel && i < 10; i++)
-            dibujarRect(0.90f, 0.87f - i * 0.065f, 0.04f, 0.04f, 1.0f, 0.90f, 0.0f);
     }
 
     private void dibujarTuberias(GameState state) {
@@ -452,15 +448,6 @@ public class Renderer {
         buf.put(v).flip();
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buf, GL15.GL_DYNAMIC_DRAW);
         GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
-    }
-
-    /** Dibuja solo el marco (4 líneas) de un rectángulo sin rellenar el interior. */
-    private void dibujarBorde(float x, float y, float ancho, float alto, float r, float g, float b) {
-        float grosor = 0.008f;
-        dibujarRect(x,              y + alto * 0.5f, ancho,  grosor, r, g, b); // arriba
-        dibujarRect(x,              y - alto * 0.5f, ancho,  grosor, r, g, b); // abajo
-        dibujarRect(x - ancho * 0.5f, y,             grosor, alto,   r, g, b); // izquierda
-        dibujarRect(x + ancho * 0.5f, y,             grosor, alto,   r, g, b); // derecha
     }
 
     // -------------------------------------------------------------------------

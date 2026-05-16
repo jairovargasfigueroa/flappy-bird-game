@@ -44,6 +44,8 @@ public class Bird {
 
     /** Aplica el impulso de salto. */
     void saltar() {
+        // Asigna (no suma): el salto siempre tiene la misma fuerza aunque el
+        // pájaro venga cayendo rápido. Es el comportamiento del Flappy original.
         velY = IMPULSO_SALTO;
     }
 
@@ -75,11 +77,16 @@ public class Bird {
         float birdBottom = y - (ALTO  * 0.5f);
         float birdTop    = y + (ALTO  * 0.5f);
 
+        // Fase 1 — descarte rápido: si no se solapan en X es imposible chocar,
+        // así evito calcular el hueco (optimización).
         float pipeLeft  = p.x - (tubAncho * 0.5f);
         float pipeRight = p.x + (tubAncho * 0.5f);
         boolean overlapX = birdRight > pipeLeft && birdLeft < pipeRight;
         if (!overlapX) return false;
 
+        // Fase 2 — en vez de detectar los dos tubos, detecto si el pájaro se
+        // salió del hueco (por arriba o por abajo). Más simple que revisar
+        // dos rectángulos por separado.
         float gapTop    = p.gapCentroY + (gapAlto * 0.5f);
         float gapBottom = p.gapCentroY - (gapAlto * 0.5f);
         return birdTop > gapTop || birdBottom < gapBottom;

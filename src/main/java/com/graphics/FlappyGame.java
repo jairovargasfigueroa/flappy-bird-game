@@ -58,7 +58,7 @@ public class FlappyGame {
 
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE,                GLFW.GLFW_FALSE);
-        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE,              GLFW.GLFW_TRUE);
+        GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE,              GLFW.GLFW_FALSE);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MAJOR,  3);
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR,  3);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE,         GLFW.GLFW_OPENGL_CORE_PROFILE);
@@ -160,6 +160,9 @@ public class FlappyGame {
         int maxPuntaje = Math.max(bird1.puntaje, bird2.puntaje);
         state.actualizarDificultad(maxPuntaje);
 
+        // GameState no conoce a SoundManager (separación de responsabilidades).
+        // Detecto los cambios comparando puntaje/gameOver ANTES y DESPUÉS de
+        // state.actualizar: si crecieron, disparo el sonido correspondiente.
         int puntosBefore    = bird1.puntaje + bird2.puntaje;
         boolean goBefore    = state.gameOver;
 

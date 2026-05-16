@@ -62,7 +62,8 @@ public class GameState {
         if (nuevoNivel == nivel) return;
 
         nivel             = nuevoNivel;
-        //escoge el minimo para q la velocidad no crezca infinitamente
+        // Math.min / Math.max son topes: la dificultad sube cada 5 puntos pero
+        // nunca pasa de un límite, para que el juego siga siendo jugable (req. 2.3).
         velocidadActual   = Math.min(VELOCIDAD_BASE + (nivel - 1) * 0.12f, VELOCIDAD_MAX);
         tiempoEntreSpawns = Math.max(TIEMPO_SPAWN_BASE - (nivel - 1) * 0.10f, TIEMPO_SPAWN_MIN);
     }
@@ -83,6 +84,8 @@ public class GameState {
             spawnTuberia();
         }
 
+        // Iterator (no for) porque borro tuberías mientras recorro la lista;
+        // un for normal lanzaría ConcurrentModificationException.
         Iterator<Pipe> it = tuberias.iterator();
         while (it.hasNext()) {
             Pipe p = it.next();

@@ -63,8 +63,8 @@ public class Background {
         dibujarNube(c2x, 0.50f);
         dibujarNube(c3x, 0.35f);
 
-        // Suelo verde en la parte inferior
-        dibujarRect(0f, -0.92f, 2f, 0.16f, 0.25f, 0.65f, 0.20f);
+        // Suelo café en la parte inferior
+        dibujarRect(0f, -0.92f, 2f, 0.16f, 0.55f, 0.35f, 0.15f);
     }
 
     // -------------------------------------------------------------------------
