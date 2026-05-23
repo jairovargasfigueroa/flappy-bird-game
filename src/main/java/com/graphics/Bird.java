@@ -15,6 +15,11 @@ public class Bird {
     static final float IMPULSO_SALTO    =  0.85f;
     static final float VELOCIDAD_MAX_CAIDA = -1.8f;
 
+    // Cuando algún pájaro llega a este puntaje, los que sigan vivos se elevan
+    // hacia el techo (suben solos) hasta morir — termina la partida.
+    static final int   PUNTAJE_ELEVACION    = 4;
+    static final float VELOCIDAD_ELEVACION  = 0.9f;
+
     // Posición horizontal fija (ambos jugadores comparten el mismo x)
     final float x = -0.45f;
 
@@ -52,12 +57,21 @@ public class Bird {
     /**
      * Actualiza física vertical.
      * Si toca el techo o el suelo, marca al pájaro como muerto.
+     *
+     * @param elevarse si es true, el pájaro sube solo a velocidad constante
+     *                 (ignora la gravedad) hasta tocar el techo y morir.
+     *                 Se activa cuando algún jugador llega a PUNTAJE_ELEVACION.
      */
-    void actualizar(float dt) {
+    void actualizar(float dt, boolean elevarse) {
         if (!vivo) return;
 
-        velY += GRAVEDAD * dt; // Para q caiga mas rapido segun la gravedad
-        if (velY < VELOCIDAD_MAX_CAIDA) velY = VELOCIDAD_MAX_CAIDA;// para q no caiga tan
+        if (elevarse) {
+            // Sube solo hacia el techo, ignorando la gravedad y el salto
+            velY = VELOCIDAD_ELEVACION;
+        } else {
+            velY += GRAVEDAD * dt; // Para q caiga mas rapido segun la gravedad
+            if (velY < VELOCIDAD_MAX_CAIDA) velY = VELOCIDAD_MAX_CAIDA;// para q no caiga tan
+        }
         y += velY * dt;
 
         float top    = y + (ALTO * 0.5f);

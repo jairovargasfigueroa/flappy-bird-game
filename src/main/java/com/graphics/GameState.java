@@ -77,7 +77,7 @@ public class GameState {
      * - Elimina tuberías fuera de pantalla.
      * - Declara game over cuando ambos pájaros están muertos.
      */
-    void actualizar(float dt, Bird bird1, Bird bird2) {
+    void actualizar(float dt, Bird bird1, Bird bird2, Bird bird3) {
         timerSpawn += dt;
         if (timerSpawn >= tiempoEntreSpawns) {
             timerSpawn = 0.0f;
@@ -96,18 +96,20 @@ public class GameState {
                 p.puntuada = true;
                 if (bird1.vivo) bird1.puntaje++;
                 if (bird2.vivo) bird2.puntaje++;
+                if (bird3.vivo) bird3.puntaje++;
             }
 
             // Colisión con cada pájaro
             if (bird1.vivo && bird1.colisionaCon(p, TUBERIA_ANCHO, GAP_ALTO)) bird1.vivo = false;
             if (bird2.vivo && bird2.colisionaCon(p, TUBERIA_ANCHO, GAP_ALTO)) bird2.vivo = false;
+            if (bird3.vivo && bird3.colisionaCon(p, TUBERIA_ANCHO, GAP_ALTO)) bird3.vivo = false;
 
             // Remover tuberías que ya salieron de pantalla
             if (p.x + (TUBERIA_ANCHO * 0.5f) < -1.3f) it.remove();
         }
 
-        // Game over solo cuando ambos pájaros están muertos
-        if (!bird1.vivo && !bird2.vivo) gameOver = true;
+        // Game over solo cuando los tres pájaros están muertos
+        if (!bird1.vivo && !bird2.vivo && !bird3.vivo) gameOver = true;
     }
 
     private void spawnTuberia() {

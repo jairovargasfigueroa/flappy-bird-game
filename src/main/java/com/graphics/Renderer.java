@@ -218,7 +218,7 @@ public class Renderer {
      * Dibuja un frame completo: fondo → tuberías → pájaros → overlay.
      * tiempo: segundos desde que arrancó la app, usado para animar el ala.
      */
-    void render(GameState state, Bird bird1, Bird bird2, float tiempo, int jugadores,
+    void render(GameState state, Bird bird1, Bird bird2, Bird bird3, float tiempo, int jugadores,
                 int opcionMenu, int opcionGameOver) {
         GL11.glClearColor(0.52f, 0.80f, 0.92f, 1.0f);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
@@ -238,11 +238,12 @@ public class Renderer {
 
         dibujarTuberias(state);
         dibujarPajaro(bird1, tiempo);
-        if (jugadores == 2) dibujarPajaro(bird2, tiempo);
+        if (jugadores >= 2) dibujarPajaro(bird2, tiempo);
+        if (jugadores == 3) dibujarPajaro(bird3, tiempo);
 
         if (!state.gameOver) {
             GL30.glBindVertexArray(vao);
-            dibujarHUD(bird1, bird2, jugadores);
+            dibujarHUD(bird1, bird2, bird3, jugadores);
         }
 
         if (state.gameOver) {
@@ -309,10 +310,11 @@ public class Renderer {
     /**
      * HUD en pantalla durante el juego.
      * 1 jugador: número del puntaje en la esquina superior izquierda.
-     * 2 jugadores: cuadradito del color del pájaro + número por cada jugador.
+     * 2-3 jugadores: cuadradito del color del pájaro + número por cada jugador,
+     * uno debajo del otro.
      * El nivel se muestra en el título de la ventana (ver FlappyGame.actualizarTitulo).
      */
-    private void dibujarHUD(Bird bird1, Bird bird2, int jugadores) {
+    private void dibujarHUD(Bird bird1, Bird bird2, Bird bird3, int jugadores) {
         GL20.glUseProgram(programa);
         GL30.glBindVertexArray(vao);
 
@@ -326,6 +328,11 @@ public class Renderer {
             // P2: cuadradito de color + número
             dibujarRect(-0.85f, 0.76f, tam, tam, bird2.r, bird2.g, bird2.b);
             dibujarNumero(bird2.puntaje, -0.68f, 0.76f, 0.10f);
+            // P3: solo en modo 3 jugadores
+            if (jugadores == 3) {
+                dibujarRect(-0.85f, 0.65f, tam, tam, bird3.r, bird3.g, bird3.b);
+                dibujarNumero(bird3.puntaje, -0.68f, 0.65f, 0.10f);
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import org.lwjgl.glfw.GLFW;
  *
  * Jugador 1: ESPACIO
  * Jugador 2: W
+ * Jugador 3: flecha ARRIBA
  */
 public class InputManager {
 
@@ -17,9 +18,11 @@ public class InputManager {
 
     private boolean prevSpace;
     private boolean prevW;
+    private boolean prevUpJ3;//Nueva variable pev del jugador 3
     private boolean prevR;
     private boolean prev1;
     private boolean prev2;
+    private boolean prev3;
     private boolean prevUp;
     private boolean prevDown;
     private boolean prevEnter;
@@ -32,9 +35,11 @@ public class InputManager {
     void reset() {
         prevSpace = false;
         prevW     = false;
+        prevUpJ3  = false;
         prevR     = false;
         prev1     = false;
         prev2     = false;
+        prev3     = false;
         prevUp    = false;
         prevDown  = false;
         // prevEnter NO se resetea — evita que ENTER se re-dispare al cambiar de pantalla
@@ -60,6 +65,14 @@ public class InputManager {
         return flanco;
     }
 
+    /** Devuelve true solo en el frame en que la flecha ARRIBA se presionó (salto J3). */
+    boolean saltarJ3() {
+        boolean ahora  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_UP) == GLFW.GLFW_PRESS;
+        boolean flanco = ahora && !prevUpJ3;
+        prevUpJ3 = ahora;
+        return flanco;
+    }
+
     /** Devuelve true solo en el frame en que R se presionó. */
     boolean reiniciar() {
         boolean ahora  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_R) == GLFW.GLFW_PRESS;
@@ -81,6 +94,14 @@ public class InputManager {
         boolean ahora  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_2) == GLFW.GLFW_PRESS;
         boolean flanco = ahora && !prev2;
         prev2 = ahora;
+        return flanco;
+    }
+
+    /** Devuelve true solo en el frame en que 3 se presionó (menú: 3 jugadores). */
+    boolean elegir3Jugadores() {
+        boolean ahora  = GLFW.glfwGetKey(window, GLFW.GLFW_KEY_3) == GLFW.GLFW_PRESS;
+        boolean flanco = ahora && !prev3;
+        prev3 = ahora;
         return flanco;
     }
 
